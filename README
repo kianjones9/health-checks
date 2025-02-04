@@ -48,5 +48,3 @@ In practice, we may consider status codes beyond just this range as successful, 
 Additionally, accurately measuring latency can be tricky. My solution implements Go's `ClientTrace` from the `net/http/httptrace` package, which allows us to specify an anonymous callback function on the `GotFirstResponseByte` trigger, and arrive at a pretty accurate timing. However, in my testing, I determined that even with this technique, we still have a ~1ms.
 
 2. The problem state also calls for binning the monitors by domain, such that endpoints poiting to different resources (i.e. different URIs) have their availability reported by domain. I chose to implement the probing in a way which allows us to tabulate availability by URI or even by page in future.
-
-3. 
