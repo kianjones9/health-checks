@@ -41,10 +41,8 @@ The problem statement is as follows:
 ## Design Considerations
 There are a few key considerations I made I'd like to highlight.
 
-1. Based on the spec set out by Fetch, an endpoint is considered "up" if and only if the response's status code is `2xx` (any 200–299 response code) and the response latency is less than 500 ms.
+1. Based on the spec set out by Fetch, an endpoint is considered "up" if and only if the response's status code is `2xx` (any 200–299 response code) and the response latency is less than 500 ms. In practice, we may consider status codes beyond just this range as successful, for example a 301 redirect may be the anticipated status code of a particular endpoint, and thus not contribute to a poor availability score.
 
-In practice, we may consider status codes beyond just this range as successful, for example a 301 redirect may be the anticipated status code of a particular endpoint, and thus not contribute to a poor availability score.
+2. Additionally, accurately measuring latency can be tricky. My solution implements Go's `ClientTrace` from the `net/http/httptrace` package, which allows us to specify an anonymous callback function on the `GotFirstResponseByte` trigger, and arrive at a pretty accurate timing. However, in my testing, I determined that even with this technique, we still have a ~1ms.
 
-Additionally, accurately measuring latency can be tricky. My solution implements Go's `ClientTrace` from the `net/http/httptrace` package, which allows us to specify an anonymous callback function on the `GotFirstResponseByte` trigger, and arrive at a pretty accurate timing. However, in my testing, I determined that even with this technique, we still have a ~1ms.
-
-2. The problem state also calls for binning the monitors by domain, such that endpoints poiting to different resources (i.e. different URIs) have their availability reported by domain. I chose to implement the probing in a way which allows us to tabulate availability by URI or even by page in future.
+3. The problem state also calls for binning the monitors by domain, such that endpoints poiting to different resources (i.e. different URIs) have their availability reported by domain. I chose to implement the probing in a way which allows us to tabulate availability by URI or even by page in future.
