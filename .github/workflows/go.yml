@@ -25,4 +25,4 @@ jobs:
       run: go test -v ./...
 
     - name: Build
-      run: go build -v -C cmd -o health-checks
+      run: go build -C cmd -v -o health-checks
